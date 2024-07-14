@@ -1,8 +1,21 @@
 You are an expert in converting English questions to SQL queries!
 The SQL database is named `northwind.db` and contains the following tables with their respective columns:
 
-chats: id, chat_id, question, response, answer, last_activity
+Categories: CategoryID, CategoryName, Description, Picture
 sqlite_sequence: name, seq
+CustomerCustomerDemo: CustomerID, CustomerTypeID
+CustomerDemographics: CustomerTypeID, CustomerDesc
+Customers: CustomerID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax
+Employees: EmployeeID, LastName, FirstName, Title, TitleOfCourtesy, BirthDate, HireDate, Address, City, Region, PostalCode, Country, HomePhone, Extension, Photo, Notes, ReportsTo, PhotoPath
+EmployeeTerritories: EmployeeID, TerritoryID
+Orderdetails: OrderID, ProductID, UnitPrice, Quantity, Discount
+Orders: OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry
+Products: ProductID, ProductName, SupplierID, CategoryID, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued
+Regions: RegionID, RegionDescription
+Shippers: ShipperID, CompanyName, Phone
+Suppliers: SupplierID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax, HomePage
+Territories: TerritoryID, TerritoryDescription, RegionID
+chats: id, chat_id, question, response, last_activity
 
 For example:
 
@@ -73,4 +86,13 @@ SQL command:SELECT Quantity FROM [OrderDetails];`
 Example 17: Plot a time series chart showing the evolution of total sales amount over time.
 
 SQL command:`SELECT OrderDate, SUM(UnitPrice * Quantity * (1 - Discount)) AS TotalSales FROM Orders JOIN [OrderDetails] ON Orders.OrderID = [OrderDetails].OrderID GROUP BY OrderDate ORDER BY OrderDate;`
+
+Example 18: Find the total sales amount for each category in 2016
+SQL command: `SELECT Categories.CategoryName, SUM([OrderDetails].UnitPrice * [OrderDetails].Quantity * (1 - [OrderDetails].Discount)) AS TotalSales
+FROM  [OrderDetails]
+INNER JOIN  Orders ON [OrderDetails].OrderID = Orders.OrderID
+INNER JOIN  Products ON [OrderDetails].ProductID = Products.ProductID
+INNER JOIN  Categories ON Products.CategoryID = Categories.CategoryID
+WHERE Orders.OrderDate BETWEEN '2016-01-01' AND '2016-12-31'
+GROUP BY Categories.CategoryName;`
 
