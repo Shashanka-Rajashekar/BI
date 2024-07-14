@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Sessions</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #000048; /* Dark blue background */
+            color: #ffffff; /* White text */
+            padding-top: 50px; /* Adjust padding for fixed navbar */
+            width:200vh;
+        }
+        .container {
+            max-width: 800px; /* Adjust container width as needed */
+            margin-top: 20px;
+        }
+        th, td {
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .table {
+            background-color: #1e1e1e; /* Dark gray background */
+            color: #ffffff; /* White text */
+        }
+        .table a {
+            color: #ffffff; /* White link text */
+        }
+        .table a:hover {
+            color: #cccccc; /* Light gray on hover */
+            text-decoration: none; /* Remove underline */
+        }
+        .btn-primary {
+            background-color: #007bff; /* Bootstrap primary blue */
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">Weekly Reports</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Week</th>
+                    <th>Product</th>
+                    <th>Cost Price</th>
+                    <th>Selling Price</th>
+                    <th>Profit/Loss</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in existing_sessions %}
+                <tr>
+                    <td>{{ session['Week Start Date'] }}</td>
+                    <td>{{ session['Number of Products Sold'] }}</td>
+                    <td>{{ session['Cost Price'] }}</td>
+                    <td>{{ session['Selling Price'] }}</td>
+                    <td>{{ session['Profit/Loss'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            
+        </table>
+        <h2>Profit/Loss Chart</h2>
+    <canvas id="profitLossChart" width="600" height="200"></canvas>
+
+    <script>
+        fetch('/chart-data')
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('profitLossChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.weeks,
+                        datasets: [{
+                            label: 'Profit/Loss',
+                            data: data.profit_loss,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderWidth: 1, 
+                            pointRadius: 1,
+                            pointHoverRadius: 3,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Week'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Profit/Loss'
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+    </script>
+
+        <form method="POST">
+            <button type="submit" class="btn btn-primary" style="position: absolute;top:90px;right:40px;">Calculate Now</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap and JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
